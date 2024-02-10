@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Screenshot</title>
+  <!-- Material-UI styles -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+  <!-- Tailwind CSS styles -->
+  <link href="./output.css" rel="stylesheet">
+</head>
+<body class="font-sans p-4 bg-stone-800 " >
+
+  <div class="max-w-md mx-auto bg-slate-700 p-8 rounded shadow-md mt-10">
+    <h1 class="text-2xl font-bold mb-4 text-white">Screenshot</h1>
+
+    <div class="mb-4 text-white">
+      <label for="url" class="block text-sm font-medium ">Enter URL:</label>
+      <input type="text" id="url" placeholder="https://example.com" class="mt-1 p-2 border text-black rounded w-full">
+    </div>
+
+    <div class="mb-4 text-white">
+      <label for="width" class="block text-sm font-medium ">Enter Width:</label>
+      <input type="text" id="width" placeholder="1920" class="mt-1 p-2 border text-black rounded w-full">
+    </div>
+
+    <div class="mb-4 text-white">
+      <label for="height" class="block text-sm font-medium ">Enter Height:</label>
+      <input type="text" id="height" placeholder="1080" class="mt-1 p-2 border text-black rounded w-full">
+    </div>
+
+    <button onclick="captureScreenshot()" class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700 focus:outline-none focus:shadow-outline-blue active:bg-blue-800">
+      Capture Screenshot
+    </button>
+
+    <div id="result" class="mt-4"></div>
+  </div>
+
+  <script>
+    async function captureScreenshot() {
+      document.getElementById('result').innerHTML = '';
+
+      const url = document.getElementById('url').value;
+      if (!url) {
+        alert('Please enter a URL');
+        return;
+      }
+
+      const height = document.getElementById('height').value;
+      if (!height) {
+        alert('Please enter a height');
+        return;
+      }
+
+      const width = document.getElementById('width').value;
+      if (!width) {
+        alert('Please enter a Width');
+        return;
+      }
+
+      const response = await fetch('http://172.18.175.27:3000/screenshot', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ url, height, width }),
+      });
+
+      if (response.ok) {
+        const blob = await response.blob();
+        const imageUrl = URL.createObjectURL(blob);
+        document.getElementById('result').innerHTML = `<a href="${imageUrl}" target="_blank" class="text-blue-500">SCREENSHOT</a>`;
+      } else {
+        alert('Error capturing screenshot');
+      }
+    }
+  </script>
+</body>
+</html>
